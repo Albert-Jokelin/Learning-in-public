@@ -316,7 +316,6 @@ They are inheritable properties of contracts and may be overriden by derived con
 contract MyContract {
 	mapping(uint => Person) public people;
 	uint256 public peopleCount;
-
 	address owner;
 
 	modifier onlyOwner() {
@@ -463,4 +462,3 @@ function buyToken() public payable{
 		emit Purchase(msg.sender, 1);
 	}
 ```
-
