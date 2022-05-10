@@ -204,7 +204,7 @@ The difference between the two is that an *address payable* is an address you ca
 The *enum* data structure are a way of keeoing track of enumerated lists in Solidity.
 
 ```
-enum State { Waitig, Ready, Active}
+enum State { Waiting, Ready, Active}
 State public state;
 
 constructor() public {
@@ -307,5 +307,160 @@ The following specifiers determine how a function can be accessed in a smart con
 |*external*|Only visible externally (only for functions) - i.e. can only be message-called (via `this.func`)|
 |*internal*|Only visible internally.|
 
-### Function modifiers
+### Function Modifiers
+Function modifiers are used to amend the semantics of functions in a declarative way. Function modifier overloading i.e having the same modifier name with different parameters isn't possible. However, they can be **overridden**.
+
+They are inheritable properties of contracts and may be overriden by derived contracts, only if they are marked *virtual*. [Modifier Overriding](https://docs.soliditylang.org/en/v0.8.13/contracts.html#modifier-overriding)
+
+```
+contract MyContract {
+	mapping(uint => Person) public people;
+	uint256 public peopleCount;
+
+	address owner;
+
+	modifier onlyOwner() {
+		require(msg.sender == owner); // throws an error when false
+		_; // Uncommon instruction: Tells the compiler to execute the function.
+	}
+	struct Person {
+		uint _id;
+		string _firstName;
+		string _lastName;
+	}
+
+	constructor() public {
+		owner = msg.sender;
+	}
+
+	function addPerson(string memory _firstName, string memory _lastName) public onlyOwner{
+		peopleCount += 1;
+		people[peopleCount] = Person(peopleCount, _firstName, _lastName);
+
+	}
+}
+```
+
+### Time Units
+```
+contract MyContract {
+	mapping(uint => Person) public people;
+	uint256 public peopleCount;
+
+	uint256 openingTime = 1649326481; // Change this to see how the modifier works.
+
+	modifier onlyWhileOpen() {
+		require(block.timestamp >= openingTime);
+		_; // Uncommon instruction: Tells the compiler to execute the function.
+	}
+	struct Person {
+		uint _id;
+		string _firstName;
+		string _lastName;
+	}
+
+	function addPerson(string memory _firstName, string memory _lastName) public onlyWhileOpen{
+		peopleCount += 1;
+		people[peopleCount] = Person(peopleCount, _firstName, _lastName);
+
+	}
+}
+
+```
+
+Time stamps are expressed in seconds in Solidity. Suffixes like *seconds*, *minutes*, *hours*, *days*, and *weeks* are used after literal numbers to specify units of time.
+### Modifiers
 We can add words to the function definition inorder to change how it behaves.
+
+| Modifier | For| Remarks |
+| :---:|:---:|:---|
+|*pure*|Functions|Disallows modification or access of state|
+|*view*|Functions|Disallows modification of state|
+|*payable*|Functions|Allows them to recieve Ether together with a call|
+|*constant*|State Variables|Disallows assignment (except initialosation), does not ooccupy storage slot|
+|*immutable*|State Variables|Allows exactly one assignment at construction time and is constant afterwards. Is stored in code.|
+|*anonymous*|Events|Does not store event signature as topic.|
+|*indexed*|Event Parameters|Stores the parameter as topic.|
+|*virtual*|Functions, Modifiers|Allows the function's or modifier's behaviour to be changed in derived contracts.|
+|*override*|-|States that this function, modifier or public state variable changes the behaviour of a function or modifier on in the base contract.
+
+## Sending Ether, and Events
+### Sending ether
+```
+contract MyContract {
+
+	mapping(address => uint256) public balances;
+	address payable wallet;
+
+	constructor(address payable _wallet) public {
+		wallet = _wallet;
+	}
+
+	function() external payable {
+		// This is a fallback function
+		buyToken();
+
+	}
+
+	function buyToken() public payable{
+		// Function to simulate buying tokens
+		// Whenever someone buys a token, this function sends the ether to seller's wallet
+
+		balances[msg.sender] += 1;
+		wallet.transfer(msg.value);
+	}
+}
+```
+A **fallback function** is a function that is executed when no other function matches the function identifier. It is ececuted if no data was given in the call. The fallback function has to be marked payable to recieve Ether and add it to the entire balance of the contract.
+
+## Events
+Events are a way for external consumers to kind of listen for things that happen ins a smart contract. They allow logging to the ethereum blockchain. Some use cases for events are:
+- Listening for events and updating user interface
+- A cheap form of storage.
+```
+contract MyContract {
+
+	mapping(address => uint256) public balances;
+	address payable wallet;
+
+	event Purchase(
+		address _buyer,
+		uint256 _amount
+	);
+	constructor(address payable _wallet) public {
+		wallet = _wallet;
+	}
+
+	function() external payable {
+		// This is a fallback function
+		buyToken();
+
+	}
+
+	function buyToken() public payable{
+		// Function to simulate buying tokens
+		// Whenever someone buys a token, this function sends the ether to seller's wallet
+
+		balances[msg.sender] += 1;
+		wallet.transfer(msg.value);
+		emit Purchase(msg.sender, 1);
+	}
+}
+```
+
+If we want to listen about purchase from certain buyers, we can change the event *Purchase* to have the following definition:
+```
+event Purchase(
+		address indexed _buyer,
+		uint256 _amount
+	);
+function buyToken() public payable{
+		// Function to simulate buying tokens
+		// Whenever someone buys a token, this function sends the ether to seller's wallet
+
+		balances[msg.sender] += 1;
+		wallet.transfer(msg.value);
+		emit Purchase(msg.sender, 1);
+	}
+```
+
