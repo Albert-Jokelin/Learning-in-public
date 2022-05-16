@@ -1,5 +1,7 @@
 # Solidity Tutorial
-⚠️ Page under construction ⚠️
+
+YT Course: https://www.youtube.com/watch?v=ipwxYa-F1uY&ab_channel=freeCodeCamp.org
+
 ##  Intro to solidity
 
 Solidity is a contract-oriented, high-level language for implementing smart contracts. It is designed to target the Etherenum Virtual Machine (EVM).
@@ -162,7 +164,7 @@ For the rest of the section, we'll be using solidity 0.5.1.
 If we change the visibility of the variable *value* to public, we don't need the *get()* function.
 
 ```
-	string public value;
+string public value;
 ```
 
 ### Default Value
@@ -316,6 +318,7 @@ They are inheritable properties of contracts and may be overriden by derived con
 contract MyContract {
 	mapping(uint => Person) public people;
 	uint256 public peopleCount;
+
 	address owner;
 
 	modifier onlyOwner() {
@@ -431,7 +434,7 @@ contract MyContract {
 	}
 
 	function() external payable {
-		// This is a fallback function
+		// This is a fallback/default function
 		buyToken();
 
 	}
@@ -462,3 +465,235 @@ function buyToken() public payable{
 		emit Purchase(msg.sender, 1);
 	}
 ```
+
+## Smart contract interaction and Inheritance
+
+```
+contract ERC20Token {
+	string public name;
+	mapping(address => uint256) public balances;
+
+	function mint() public{
+		balances[msg.sender]++;
+	}
+}
+
+contract MyContract {
+	address payable wallet;
+	address payable token;
+
+	event Purchase(
+		address _buyer,
+		uint256 _amount
+	);
+	constructor(address payable _wallet, address _token) public {
+		wallet = _wallet;
+		token = _token;
+	}
+
+	function() external payable {
+		buyToken();
+
+	}
+
+	function buyToken() public payable{
+		ERC20Token _token = ERC20Token(address(token));
+		_token.mint();
+		wallet.transfer(msg.value);
+	}
+}
+```
+
+---
+## **A short note on the ERC-20 token**
+The ethereum blockchain allows us to create our own token (like cryptocurrencies) that can be purchased using Ether. ERC-20 is the standard that specifies how these tokens behave.
+
+Ethereum is a blockchain, that keeps track of all the balances of ether. You can make your own cryptocurrency without making your own blockchain using smart contracts (it'll be built on the ethereum blockchain).
+
+---
+
+If we were to observe the code in the function `mint()`, we would see that it wouldn't mint any coins for us rather the address of `MyContract` which calls the function from its `buyToken()` function. To fix this, we change `msg.sender` to `tx.origin`.
+
+Smart contracts can be referenced in many other ways. We can use a one-line expression like this:
+```
+function buyToken() public payable {
+	ERC20Token(addres(token)).mint();
+	wallet.transfer(msg.value);
+}
+```
+
+We can also refactor the token in a state variable like this:
+```
+contract MyContract {
+	ERC20Token public token;
+	// ...
+}
+```
+
+Then we can simply call the `mint()` function like this:
+```
+function buyToken() public payable {
+	token.mint();
+	wallet.transfer(msg.value);
+}
+```
+
+### Inheritance in solidity
+
+Solidity allows us to create smart contracts that inherit from each other. The syntax is as follows:
+
+```
+contract MyToken is ERC20Token {
+	// ...
+}
+```
+
+We can keep track of the the token name in the parent smart contract like this:
+
+```
+contract ERC20Token {
+	string public name;
+	mapping(address => uint256) public balances;
+
+	constructor(string memory _name) public {
+		name = _name;
+	}
+
+	function mint() public {
+		balances[tx.origin] ++;
+	}
+}
+```
+
+We can override the name of the parent token inside the constructor of the child token. We can also create a symbol for the child token and set it in the constructor.
+
+```
+contract MyToken is ERC20TOken {
+	string public symbol;
+
+	constructor ( string memory, _name, string memory _symbol) ERC20Token(_name) public {
+		symbol = _symbol;
+	}
+}
+```
+
+We can refer to the parent  `mint()` function by using the `super` keyword:
+
+```
+function mint() public {
+
+        super.mint();
+
+        ownerCount ++;
+
+        owners.push(msg.sender);
+
+    }
+```
+
+The final code is:
+```
+pragma solidity ^0.5.15;
+
+contract ERC20Token {
+
+    string public name;
+
+    mapping(address => uint256) public balances;
+
+
+
+    constructor (string memory _name) public {
+
+        name = _name;
+
+    }
+
+
+
+    function mint() public{
+
+        balances[tx.origin]++;
+
+    }
+
+}
+
+
+
+contract MyToken is ERC20Token {
+
+    string public symbol;
+
+    address[] public owners;
+
+    uint256 public ownerCount;
+
+
+
+    constructor(string memory _name, string memory _symbol) ERC20Token(_name) public {
+
+        symbol = _symbol;
+
+    }
+
+
+
+    function mint() public {
+
+        super.mint();
+
+        ownerCount ++;
+
+        owners.push(msg.sender);
+
+    }
+
+
+
+}
+```
+
+## Libraries in Solidity
+
+If we have a function that needs to be used across different smart contracts, we define it in a library. We do this to follow the programming principle of DRY - "Don't repeat yourself". The following are the steps to define/create a library in solidity.
+
+1. Use the keyword `library`
+```
+library Math {
+	// ...
+}
+```
+
+2. Define functions inside the library
+
+```
+library Math {
+	function divide(uint256 a, uint256 b) {
+		require(b > 0);
+		uint256 c = a / b;
+		return c;
+	}
+}
+```
+
+3. Using the library functions.
+
+```
+contract MyContract {
+	uint256 public value;
+
+	function calculate(uint _value1, uint _value2) public {
+		value = Math.divide(_value1, _value2);
+	}
+}
+```
+
+4. This is how you import libraries from other files:
+```
+import "./Math.sol";
+```
+
+Some of the commonly used libraries are:
+1. [OpenZeppelin - Safe Math](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol)
+
