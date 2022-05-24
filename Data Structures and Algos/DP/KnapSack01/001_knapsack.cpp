@@ -28,11 +28,9 @@ int memoizedKnapsack(vector<vector<int>> &t, vector<int> &wt, vector<int> &val, 
 int iterativeKnapsack(vector<vector<int>> &t, vector<int> &wt, vector<int> &val, int n, int w)
 {
   for (auto i = 0; i <= n; i++)
-    t[i][0] = 0;
-  for (auto i = 0; i <= w; i++)
+    t[i][0] = 1;
+  for (auto i = 1; i <= w; i++)
     t[0][i] = 0;
-
-  t[0][0] = 1;
 
   for (auto i = 1; i <= n; i++)
     for (auto j = 1; j <= w; j++)
