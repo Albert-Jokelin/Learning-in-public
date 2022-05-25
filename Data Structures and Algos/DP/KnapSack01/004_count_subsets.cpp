@@ -34,6 +34,20 @@ int memoizationEqualSubsets(vector<vector<int>> &t, vector<int> &a, int s, int n
 }
 
 int tabularEqualSubsets(vector<vector<int>> &t, vector<int> &a, int s, int n)
+{
+  for (auto i = 0; i <= n; i++)
+    t[i][0] = 1;
+  for (auto i = 0; i <= s; i++)
+    t[0][i] = 0;
+  for (auto i = 1; i <= n; i++)
+    for (auto j = 1; j <= s; j++)
+      if (a[i - 1] <= j)
+        t[i][j] = t[i - 1][j - a[i - 1]] + t[i - 1][j];
+      else
+        t[i][j] = t[i - 1][j];
+
+  return t[n][s];
+}
 int main()
 {
   // ...

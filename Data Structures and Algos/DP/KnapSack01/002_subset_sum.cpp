@@ -34,7 +34,7 @@ int memoizedSubsetSum(vector<vector<int>> &t, vector<int> &a, int s, int n)
   return t[n][s] = memoizedSubsetSum(t, a, s, n - 1);
 }
 
-int tabulatedSubsetSum(vector<vector<bool>> &t, vector<int> &a, int s, int n)
+int tabulatedSubsetSum(vector<vector<int>> &t, vector<int> &a, int s, int n)
 {
   for (auto i = 0; i <= n; i++)
     t[i][0] = 1;
