@@ -20,9 +20,9 @@ int memoizedKnapsack(vector<vector<int>> &t, vector<int> &wt, vector<int> &val, 
   if (t[n][w] != -1)
     return t[n][w];
   if (wt[n - 1] <= w)
-    return t[n][w] = max(val[n - 1] + recursiveKnapsack(wt, val, n - 1, w - val[n - 1]), recursiveKnapsack(wt, val, n - 1, w));
+    return t[n][w] = max(val[n - 1] + memoizedKnapsack(t, wt, val, n - 1, w - val[n - 1]), memoizedKnapsack(t, wt, val, n - 1, w));
 
-  return t[n][w] = recursiveKnapsack(wt, val, n - 1, w);
+  return t[n][w] = memoizedKnapsack(t, wt, val, n - 1, w);
 }
 
 int iterativeKnapsack(vector<vector<int>> &t, vector<int> &wt, vector<int> &val, int n, int w)
