@@ -6,6 +6,14 @@
 
 using namespace std;
 
+int readInt(string s = "")
+{
+  cout << s;
+  int x;
+  cin >> x;
+  return x;
+}
+
 bool recursiveEqualSum(vector<int> &a, int s, int n)
 {
   if (s == 0)
@@ -45,14 +53,17 @@ int tabulationEqualSum(vector<vector<int>> &t, vector<int> &a, int s, int n)
         t[i][j] = max(t[i - 1][j - a[i - 1]], t[i - 1][j]);
       }
       else
-      t[i][j] = t[i - 1][j];
+        t[i][j] = t[i - 1][j];
 
   return t[n][s];
 }
 int main()
 {
-  int sum = 0;
+  int sum = 0, n = readInt("\nEnter the size of the array: ");
   vector<int> arr;
+
+  for (auto i = 0; i < n; i++)
+    arr.push_back(readInt());
 
   for (auto i = 0; i < arr.size(); i++)
     sum += arr[i];
@@ -64,7 +75,10 @@ int main()
   }
 
   sum /= 2;
-  // ...
+
+  vector<vector<int>> t(n + 1, vector<int>(sum + 1, -1));
+
+  cout << "\nRecursive call: " << recursiveEqualSum(arr, sum, arr.size()) << "\nMemoized call: " << memoizationEqualSum(t, arr, sum, arr.size()) << "\nIterative call: " << tabulationEqualSum(t, arr, sum, arr.size());
 
   return 0;
 }

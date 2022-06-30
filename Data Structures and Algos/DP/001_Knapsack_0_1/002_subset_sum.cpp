@@ -8,6 +8,13 @@
 
 using namespace std;
 
+int readInt()
+{
+  int x;
+  cin >> x;
+  return x;
+}
+
 int recursiveSubsetSum(vector<int> &a, int s, int n)
 {
   if (s == 0)
@@ -55,6 +62,20 @@ int tabulatedSubsetSum(vector<vector<int>> &t, vector<int> &a, int s, int n)
 
 int main()
 {
-  // ...
+  int n, w;
+  vector<int> wt;
+
+  cout << "\nEnter the size of the array: ";
+  cin >> n;
+  cout << "\nEnter the weights array: ";
+  for (auto i = 0; i < n; i++)
+    wt.push_back(readInt());
+  cout << "\nEnter the capacity of the knapsack: ";
+  w = readInt();
+
+  vector<vector<int>> t(n, vector<int>(w, -1));
+
+  cout << "\nRecursive call: " << recursiveSubsetSum(wt, n, w) << "\nMemoized call: " << memoizedSubsetSum(t, wt, n, w) << "\nIterative call: " << tabulatedSubsetSum(t, wt, n, w);
+
   return 0;
 }

@@ -1,6 +1,8 @@
 /*
   Given an array and a difference, find the number of ways the array can be partitioed such that the difference
   of the sum of the partitions is equal to the given difference.
+
+  We use the
 */
 
 #include <bits/stdc++.h>

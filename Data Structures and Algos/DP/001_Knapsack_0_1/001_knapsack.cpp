@@ -1,6 +1,23 @@
+/*
+  Given two integer-based arrays- val and wt and two integers- n and w where,
+  val denotes the value of the items present
+  wt denotes the weight of the items present
+  n denotes the number odf items present
+  w denotes the capacity of the knapsack
+
+  Find the maximum number of elements that can be stored in the knapsack.
+*/
+
 #include <bits/stdc++.h>
 
 using namespace std;
+
+int readInt()
+{
+  int x;
+  cin >> x;
+  return x;
+}
 
 int recursiveKnapsack(vector<int> &wt, vector<int> &val, int n, int w)
 {
@@ -46,7 +63,23 @@ int iterativeKnapsack(vector<vector<int>> &t, vector<int> &wt, vector<int> &val,
 
 int main()
 {
-  // ...
+  int n, w;
+  vector<int> wt, val;
+
+  cout << "\nEnter the size of the array: ";
+  cin >> n;
+  cout << "\nEnter the value array: ";
+  for (auto i = 0; i < n; i++)
+    val.push_back(readInt());
+  cout << "\nEnter the weights array: ";
+  for (auto i = 0; i < n; i++)
+    wt.push_back(readInt());
+  cout << "\nEnter the capacity of the knapsack: ";
+  w = readInt();
+
+  vector<vector<int>> t(n, vector<int>(w, -1));
+
+  cout << "\nRecursive call: " << recursiveKnapsack(wt, val, n, w) << "\nMemoized call: " << memoizedKnapsack(t, wt, val, n, w) << "\nIterative call: " << iterativeKnapsack(t, wt, val, n, w);
 
   return 0;
 }

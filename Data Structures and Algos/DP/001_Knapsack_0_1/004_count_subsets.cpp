@@ -7,6 +7,13 @@
 
 using namespace std;
 
+int readInt()
+{
+  int x;
+  cin >> x;
+  return x;
+}
+
 int recursivecountSubsets(vector<int> &a, int s, int n)
 {
   if (!n)
@@ -50,7 +57,20 @@ int tabularEqualSubsets(vector<vector<int>> &t, vector<int> &a, int s, int n)
 }
 int main()
 {
-  // ...
+  int n, sum;
+  vector<int> wt;
+
+  cout << "\nEnter the size of the array: ";
+  cin >> n;
+  cout << "\nEnter the weights array: ";
+  for (auto i = 0; i < n; i++)
+    wt.push_back(readInt());
+  cout << "\nEnter the target sum: ";
+  sum = readInt();
+
+  vector<vector<int>> t(n + 1, vector<int>(sum + 1, -1));
+
+  cout << "\nRecursive call: " << recursivecountSubsets(wt, sum, n) << "\nMemoized call: " << memoizationEqualSubsets(t, wt, sum, n) << "\nIterative call: " << tabularEqualSubsets(t, wt, sum, n);
 
   return 0;
 }

@@ -8,6 +8,13 @@
 
 using namespace std;
 
+int readInt(string s = "")
+{
+  cout<<s;
+  int x;
+  cin>>x;
+  return x;
+}
 int recursiveMinSubset(vector<int> &a, int s, int n)
 {
   if (n == 0 || s == 0)
@@ -48,12 +55,13 @@ int tabulatedMinSubset(vector<vector<int>> &t, vector<int> &a, int s, int n)
 
 int main()
 {
+
   vector<int> a;
-  int s, n;
+  int s = readInt("\nEnter the sum: "), n = readInt("\nEnter the size: ");
+  vector<vector<int>> t(n + 1, vector<int>(n + 1, -1));
 
   for (auto &e : a)
     s += e;
-  recursiveMinSubset(a, s / 2, n);
-  // ...
+  cout << "\nRecursive call: " << recursiveMinSubset(a, s / 2, n) << "\nMemoized Call: " << memoizedMinSubset(t, a, s / 2, n) << "\nIterative call: " << tabulatedMinSubset(t, a, s / 2, n);
   return 0;
 }
