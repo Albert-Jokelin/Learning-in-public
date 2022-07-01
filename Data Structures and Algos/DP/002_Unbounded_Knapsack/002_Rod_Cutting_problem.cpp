@@ -7,6 +7,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int readInt()
+{
+  int x;
+  cin >> x;
+  return x;
+}
+
 int rodCuttingProblem(vector<vector<int>> &t, vector<int> &len, vector<int> &price, int n, int N)
 {
   if (n == 0 || N == 0)
@@ -22,5 +29,14 @@ int rodCuttingProblem(vector<vector<int>> &t, vector<int> &len, vector<int> &pri
 
 int main()
 {
+  int n = readInt(), N = readInt();
+  vector<vector<int>> t(n+1, vector<int>(N+1, 0));
+  vector<int> len(n, 0), price(n, 0);
+
+  for(auto i = 0; i < n; i++){
+    cin>>len[i]>>price[i];
+  }
+
+  cout<<rodCuttingProblem(t, len, price, n, N);
   return 0;
 }
