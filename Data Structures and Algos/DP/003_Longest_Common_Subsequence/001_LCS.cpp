@@ -44,9 +44,9 @@ int memoized(vector<vector<int>> &t, string x, string y, int m, int n)
   if (t[m][n] != -1)
     return t[m][n];
   if (x[m] == y[n])
-    return t[m][n] = 1 + recursive(x, y, m - 1, n - 1);
+    return t[m][n] = 1 + memoized(t, x, y, m - 1, n - 1);
 
-  return t[m][n] = max(recursive(x, y, m - 1, n), recursive(x, y, m, n - 1));
+  return t[m][n] = max(memoized(t, x, y, m - 1, n), memoized(t, x, y, m, n - 1));
 }
 
 int iterative(vector<vector<int>> &t, string x, string y, int m, int n)
@@ -67,5 +67,9 @@ int iterative(vector<vector<int>> &t, string x, string y, int m, int n)
 
 int main()
 {
+  string x, y;
+  cin>>x>>y;
+  vector<vector<int>> t(x.size() + 1, vector<int>(y.size() + 1, -1));
+  cout<<iterative(t, x, y, x.size(), y.size());
   return 0;
 }
